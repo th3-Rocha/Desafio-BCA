@@ -5,6 +5,7 @@ import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
 import { HealthController } from './modules/health/health.controller';
 import { LoggerService } from './modules/logger/logger.service';
+import { TransactionsModule } from './modules/transactions/transactions.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { LoggerService } from './modules/logger/logger.service';
         limit: 100,
       },
     ]),
+    TransactionsModule,
   ],
   controllers: [HealthController],
   providers: [

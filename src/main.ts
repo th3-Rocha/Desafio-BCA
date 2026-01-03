@@ -4,6 +4,7 @@ import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { Logger } from 'nestjs-pino';
 import { ConfigService } from '@nestjs/config';
 import helmet from 'helmet';
+import { UnprocessableEntityException, ValidationPipe } from '@nestjs/common';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const configService = app.get(ConfigService);
@@ -11,7 +12,16 @@ async function bootstrap() {
 
   app.useLogger(app.get(Logger));
   app.use(helmet());
-
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true,
+      forbidNonWhitelisted: true,
+      transform: true,
+      exceptionFactory: (errors) => {
+        return new UnprocessableEntityException(errors);
+      },
+    }),
+  );
   const config = new DocumentBuilder()
     .setTitle('Desafio BCA API')
     .setDescription('Desafio: API de transações financeiras')
