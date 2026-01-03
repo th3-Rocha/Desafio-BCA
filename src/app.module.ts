@@ -3,7 +3,8 @@ import { ConfigModule } from '@nestjs/config';
 import { LoggerModule } from 'nestjs-pino';
 import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
-import { HealthController } from './infrastructure/http/controllers/health.controller';
+import { HealthController } from './modules/health/health.controller';
+import { LoggerService } from './modules/logger/logger.service';
 
 @Module({
   imports: [
@@ -26,10 +27,12 @@ import { HealthController } from './infrastructure/http/controllers/health.contr
   ],
   controllers: [HealthController],
   providers: [
+    LoggerService,
     {
       provide: APP_GUARD,
       useClass: ThrottlerGuard,
     },
   ],
+  exports: [LoggerService],
 })
 export class AppModule {}

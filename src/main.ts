@@ -22,4 +22,7 @@ async function bootstrap() {
   SwaggerModule.setup('api/docs', app, documentFactory);
   await app.listen(port);
 }
-bootstrap();
+bootstrap().catch((err) => {
+  console.error('Fatal error during application bootstrap:', err);
+  process.exit(1);
+});

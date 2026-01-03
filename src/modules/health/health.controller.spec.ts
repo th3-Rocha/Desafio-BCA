@@ -1,5 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { HealthController } from './health.controller';
+import { HealthResponseDto } from './health-response.dto';
 
 describe('HealthController', () => {
   let controller: HealthController;
@@ -17,7 +18,7 @@ describe('HealthController', () => {
   });
 
   it('should return "ok" with timestamp and uptime', () => {
-    const result = controller.checkHealth();
+    const result: HealthResponseDto = controller.checkHealth();
     expect(result.status).toBe('ok');
     expect(typeof result.timestamp).toBe('string');
     expect(typeof result.uptime).toBe('number');

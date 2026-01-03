@@ -1,11 +1,10 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import request from 'supertest';
-import { App } from 'supertest/types';
 import { AppModule } from './../src/app.module';
-
-describe('AppController (e2e)', () => {
-  let app: INestApplication<App>;
+import { HealthResponseDto } from './../src/infrastructure/http/dtos/health-response.dto';
+describe('HealthCheck (e2e)', () => {
+  let app: INestApplication;
 
   beforeEach(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -16,10 +15,20 @@ describe('AppController (e2e)', () => {
     await app.init();
   });
 
-  it('/ (GET)', () => {
+  afterAll(async () => {
+    await app.close();
+  });
+
+  it('/health (GET)', () => {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
     return request(app.getHttpServer())
-      .get('/')
+      .get('/health')
       .expect(200)
-      .expect('Hello World!');
+      .expect((res: request.Response) => {
+        const body = res.body as HealthResponseDto;
+        if (body.status !== 'ok') throw new Error('Status incorreto');
+        if (!body.timestamp) throw new Error('Timestamp ausente');
+        if (typeof body.uptime !== 'number') throw new Error('Uptime inválido');
+      });
   });
 });
