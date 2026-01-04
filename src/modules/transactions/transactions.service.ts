@@ -12,8 +12,9 @@ export class TransactionsService {
   create(createTransactionDto: CreateTransactionDto) {
     const amountInCents = Math.round(createTransactionDto.amount * 100); //salva inteiro
     const timestampDate = new Date(createTransactionDto.timestamp);
+    const now = new Date();
 
-    if (timestampDate > new Date()) {
+    if (timestampDate > now) {
       throw new UnprocessableEntityException(
         'A transação NÃO PODE estar no futuro.',
       );

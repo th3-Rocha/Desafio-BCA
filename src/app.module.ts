@@ -7,13 +7,14 @@ import { HealthController } from './modules/health/health.controller';
 import { LoggerService } from './modules/logger/logger.service';
 import { TransactionsModule } from './modules/transactions/transactions.module';
 import { StatisticsModule } from './modules/statistics/statistics.module';
+import { DatabaseModule } from './modules/database/database.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
     LoggerModule.forRoot({
       pinoHttp: {
-        autoLogging: true,
+        autoLogging: false,
         transport:
           process.env.NODE_ENV !== 'production'
             ? { target: 'pino-pretty' }
@@ -28,6 +29,7 @@ import { StatisticsModule } from './modules/statistics/statistics.module';
     ]),
     TransactionsModule,
     StatisticsModule,
+    DatabaseModule,
   ],
   controllers: [HealthController],
   providers: [
