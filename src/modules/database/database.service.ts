@@ -30,7 +30,7 @@ export class DatabaseService implements OnModuleInit, OnModuleDestroy {
   }
 
   private getThreshold(): number {
-    return Date.now() - 60000; //ultimos 60 segundos
+    return Date.now() - 60000;
   }
 
   private removeOldTransactions() {

@@ -9,8 +9,4 @@ export class StatisticsRepository {
   getRecent(): Transaction[] {
     return this.db.getRecentTransactions();
   }
-
-  // deleteOlders(): void {
-  //   this.db.clear();
-  // }
 }

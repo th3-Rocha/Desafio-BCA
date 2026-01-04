@@ -5,7 +5,7 @@ export class HealthResponseDto {
   status: string;
 
   @ApiProperty({
-    example: '2024-01-03T10:00:00.000Z',
+    example: '2026-01-03T10:00:00.000Z',
     description: 'Data atual do servidor',
   })
   timestamp: string;

@@ -1,6 +1,7 @@
 import { Controller, Get, HttpCode } from '@nestjs/common';
 import { StatisticsService } from './statistics.service';
-import { ApiOperation } from '@nestjs/swagger';
+import { ApiOkResponse, ApiOperation } from '@nestjs/swagger';
+import { Statistic } from './entities/statistic.entity';
 
 @Controller('statistics')
 export class StatisticsController {
@@ -12,7 +13,11 @@ export class StatisticsController {
       'retorna estatísticas das transações que ocorreram nos últimos 60 segundos.',
   })
   @Get()
-  calcStats() {
+  @ApiOkResponse({
+    description: 'Estatísticas dos últimos 60 segundos',
+    type: Statistic,
+  })
+  getStatistics(): Statistic {
     return this.statisticsService.getStatistics();
   }
 }
