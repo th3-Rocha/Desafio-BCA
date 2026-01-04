@@ -6,6 +6,7 @@ import { APP_GUARD } from '@nestjs/core';
 import { HealthController } from './modules/health/health.controller';
 import { LoggerService } from './modules/logger/logger.service';
 import { TransactionsModule } from './modules/transactions/transactions.module';
+import { StatisticsModule } from './modules/statistics/statistics.module';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { TransactionsModule } from './modules/transactions/transactions.module';
       },
     ]),
     TransactionsModule,
+    StatisticsModule,
   ],
   controllers: [HealthController],
   providers: [

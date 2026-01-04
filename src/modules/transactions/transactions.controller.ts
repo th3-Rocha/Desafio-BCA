@@ -23,6 +23,10 @@ export class TransactionsController {
   create(@Body() createTransactionDto: CreateTransactionDto) {
     return this.transactionsService.create(createTransactionDto);
   }
+  @ApiResponse({
+    status: 200,
+    description: 'Delete all transactions',
+  })
   @ApiOperation({ summary: 'Deleta todas as transações' })
   @Delete()
   deleteAll() {
