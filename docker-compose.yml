@@ -3,6 +3,8 @@ services:
     build: .
     container_name: bca_nestjs
     ports:
-      - "3000:3000"
+      - '3000:3000'
     environment:
       - NODE_ENV=production
+    volumes:
+      - .env:/usr/src/app/.env

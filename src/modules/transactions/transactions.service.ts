@@ -1,12 +1,17 @@
-import { Injectable, UnprocessableEntityException } from '@nestjs/common';
+import {
+  Inject,
+  Injectable,
+  UnprocessableEntityException,
+} from '@nestjs/common';
 import { CreateTransactionDto } from './dto/create-transaction.dto';
-import { TransactionsRepository } from './transactions.repository';
 import { Transaction } from './entities/transaction.entity';
-
+import { TRANSACTION_REPOSITORY } from './interfaces/transaction-repository.interface';
+import type { ITransactionRepository } from './interfaces/transaction-repository.interface';
 @Injectable()
 export class TransactionsService {
   constructor(
-    private readonly transactionsRepository: TransactionsRepository,
+    @Inject(TRANSACTION_REPOSITORY)
+    private readonly repository: ITransactionRepository,
   ) {}
 
   create(createTransactionDto: CreateTransactionDto) {
@@ -25,12 +30,12 @@ export class TransactionsService {
       timestamp: timestampDate,
     };
 
-    this.transactionsRepository.save(transaction);
+    this.repository.save(transaction);
     return;
   }
 
   deleteAll() {
-    this.transactionsRepository.deleteAll();
+    this.repository.deleteAll();
     return;
   }
 }

@@ -1,11 +1,11 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { TransactionsService } from './transactions.service';
-import { TransactionsRepository } from './transactions.repository';
+import { TRANSACTION_REPOSITORY } from './interfaces/transaction-repository.interface';
 import { UnprocessableEntityException } from '@nestjs/common';
 
 describe('TransactionsService', () => {
   let service: TransactionsService;
-  const mockTransactionsRepository = {
+  const mockRepository = {
     save: jest.fn(),
     deleteAll: jest.fn(),
   };
@@ -17,8 +17,8 @@ describe('TransactionsService', () => {
       providers: [
         TransactionsService,
         {
-          provide: TransactionsRepository,
-          useValue: mockTransactionsRepository,
+          provide: TRANSACTION_REPOSITORY, // ← Usa o token
+          useValue: mockRepository,
         },
       ],
     }).compile();
@@ -29,17 +29,19 @@ describe('TransactionsService', () => {
   it('should be defined', () => {
     expect(service).toBeDefined();
   });
+
   it('should create a transaction with correct amount in cents', () => {
     const dto = {
       amount: 12.5,
       timestamp: new Date().toISOString(),
     };
     service.create(dto);
-    expect(mockTransactionsRepository.save).toHaveBeenCalledWith({
-      amount: 1250, // 12.50 * 100 = 1250
-      timestamp: expect.any(Date) as unknown as Date, // tira eror de eslit
+    expect(mockRepository.save).toHaveBeenCalledWith({
+      amount: 1250,
+      timestamp: expect.any(Date) as unknown as Date, // tira erro de eslit
     });
   });
+
   it('should throw UnprocessableEntityException if date is in the future', () => {
     const futureDate = new Date();
     futureDate.setFullYear(futureDate.getFullYear() + 1);
@@ -50,11 +52,11 @@ describe('TransactionsService', () => {
     };
 
     expect(() => service.create(dto)).toThrow(UnprocessableEntityException);
-    expect(mockTransactionsRepository.save).not.toHaveBeenCalled();
+    expect(mockRepository.save).not.toHaveBeenCalled();
   });
 
   it('should call repository.deleteAll', () => {
     service.deleteAll();
-    expect(mockTransactionsRepository.deleteAll).toHaveBeenCalled();
+    expect(mockRepository.deleteAll).toHaveBeenCalled();
   });
 });
