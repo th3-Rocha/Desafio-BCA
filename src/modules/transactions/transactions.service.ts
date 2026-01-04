@@ -10,7 +10,7 @@ export class TransactionsService {
   ) {}
 
   create(createTransactionDto: CreateTransactionDto) {
-    const amountInCents = Math.round(createTransactionDto.amount * 100);
+    const amountInCents = Math.round(createTransactionDto.amount * 100); //salva inteiro
     const timestampDate = new Date(createTransactionDto.timestamp);
 
     if (timestampDate > new Date()) {
