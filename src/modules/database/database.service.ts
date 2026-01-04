@@ -36,7 +36,6 @@ export class DatabaseService implements OnModuleInit, OnModuleDestroy {
   private removeOldTransactions() {
     if (this._transactions.length === 0) return;
     const threshold = this.getThreshold();
-    if (this._transactions[0].timestamp.getTime() >= threshold) return;
     this._transactions = this._transactions.filter(
       (t) => t.timestamp.getTime() >= threshold,
     );
