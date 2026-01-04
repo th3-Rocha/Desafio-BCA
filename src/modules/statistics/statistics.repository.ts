@@ -6,8 +6,8 @@ import { Transaction } from '../transactions/entities/transaction.entity';
 export class StatisticsRepository {
   constructor(private readonly db: DatabaseService) {}
 
-  getAll(): Transaction[] {
-    return this.db.transactions;
+  getRecent(): Transaction[] {
+    return this.db.getRecentTransactions();
   }
 
   // deleteOlders(): void {

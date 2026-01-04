@@ -1,26 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { Transaction } from '../transactions/entities/transaction.entity';
 import { StatisticsRepository } from './statistics.repository';
-import { Logger } from 'nestjs-pino';
 
 @Injectable()
 export class StatisticsService {
-  constructor(
-    private readonly statisticsRepository: StatisticsRepository,
-    private readonly logger: Logger,
-  ) {}
+  constructor(private readonly statisticsRepository: StatisticsRepository) {}
 
   getStatistics() {
-    const allTransactions: Transaction[] = this.statisticsRepository.getAll();
-
-    const recentTransactions = this.filterLast60Seconds(allTransactions);
-
+    const recentTransactions = this.statisticsRepository.getRecent();
     return this.calculateMetrics(recentTransactions);
-  }
-
-  private filterLast60Seconds(transactions: Transaction[]): Transaction[] {
-    const timeLimit = new Date(Date.now() - 60000).getTime();
-    return transactions.filter((t) => t.timestamp.getTime() >= timeLimit);
   }
 
   private calculateMetrics(transactions: Transaction[]) {
