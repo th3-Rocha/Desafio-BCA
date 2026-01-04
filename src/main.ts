@@ -27,6 +27,7 @@ async function bootstrap() {
     .setDescription('Desafio: API de transações financeiras')
     .setVersion('1.0')
     .addTag('Health', 'Endpoint de health check')
+    .addTag('Transactions', 'Endpoint das transações')
     .build();
   const documentFactory = () => SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api/docs', app, documentFactory);

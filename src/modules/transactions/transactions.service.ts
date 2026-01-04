@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnprocessableEntityException } from '@nestjs/common';
 import { CreateTransactionDto } from './dto/create-transaction.dto';
 import { TransactionsRepository } from './transactions.repository';
 import { Transaction } from './entities/transaction.entity';
@@ -11,9 +11,17 @@ export class TransactionsService {
 
   create(createTransactionDto: CreateTransactionDto) {
     const amountInCents = Math.round(createTransactionDto.amount * 100);
+    const timestampDate = new Date(createTransactionDto.timestamp);
+
+    if (timestampDate > new Date()) {
+      throw new UnprocessableEntityException(
+        'A transação NÃO PODE estar no futuro.',
+      );
+    }
+
     const transaction: Transaction = {
       amount: amountInCents,
-      timestamp: new Date(createTransactionDto.timestamp),
+      timestamp: timestampDate,
     };
 
     this.transactionsRepository.save(transaction);
