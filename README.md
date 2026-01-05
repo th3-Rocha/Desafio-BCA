@@ -1,6 +1,6 @@
 # Desafio BCA - API de Transações Financeiras
 
-Uma API RESTful robusta e escalável para gerenciamento de transações financeiras em tempo real, desenvolvida com NestJS e TypeScript.
+Uma API RESTful para gerenciamento de transações financeiras em tempo real, desenvolvida com NestJS e TypeScript. 
 
 ## 📋 Índice
 
@@ -130,7 +130,7 @@ desafio-bca/
 ### Pré-requisitos
 
 - Node.js >= 18.x
-- PNPM >= 8.x (ou NPM/Yarn)
+- PNPM >= 8.x 
 - Docker e Docker Compose (opcional)
 
 ### Instalação das Dependências
