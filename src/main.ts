@@ -26,8 +26,9 @@ async function bootstrap() {
     .setTitle('Desafio BCA API')
     .setDescription('Desafio: API de transações financeiras')
     .setVersion('1.0')
-    .addTag('Health', 'Endpoint de health check')
+    .addTag('Health', 'Endpoint de health-check')
     .addTag('Transactions', 'Endpoint das transações')
+    .addTag('Statistics', 'Endpoint das estatísticas')
     .build();
   const documentFactory = () => SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api/docs', app, documentFactory);

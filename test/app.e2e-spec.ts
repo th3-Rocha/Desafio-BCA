@@ -2,7 +2,8 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import request from 'supertest';
 import { AppModule } from './../src/app.module';
-import { HealthResponseDto } from './../src/infrastructure/http/dtos/health-response.dto';
+import { HealthResponseDto } from './../src/modules/health/health-response.dto';
+
 describe('HealthCheck (e2e)', () => {
   let app: INestApplication;
 
@@ -20,7 +21,6 @@ describe('HealthCheck (e2e)', () => {
   });
 
   it('/health (GET)', () => {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
     return request(app.getHttpServer())
       .get('/health')
       .expect(200)

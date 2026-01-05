@@ -4,7 +4,6 @@ import { LoggerModule } from 'nestjs-pino';
 import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
 import { HealthController } from './modules/health/health.controller';
-import { LoggerService } from './modules/logger/logger.service';
 import { TransactionsModule } from './modules/transactions/transactions.module';
 import { StatisticsModule } from './modules/statistics/statistics.module';
 import { DatabaseModule } from './modules/database/database.module';
@@ -12,6 +11,7 @@ import { DatabaseModule } from './modules/database/database.module';
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
+    DatabaseModule,
     LoggerModule.forRoot({
       pinoHttp: {
         autoLogging: false,
@@ -29,16 +29,13 @@ import { DatabaseModule } from './modules/database/database.module';
     ]),
     TransactionsModule,
     StatisticsModule,
-    DatabaseModule,
   ],
   controllers: [HealthController],
   providers: [
-    LoggerService,
     {
       provide: APP_GUARD,
       useClass: ThrottlerGuard,
     },
   ],
-  exports: [LoggerService],
 })
 export class AppModule {}

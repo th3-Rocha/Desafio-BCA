@@ -1,13 +1,17 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Inject } from '@nestjs/common';
 import { Transaction } from '../transactions/entities/transaction.entity';
-import { StatisticsRepository } from './statistics.repository';
 import { Statistic } from './entities/statistic.entity';
+import { STATISTICS_REPOSITORY } from './interfaces/statistics-repository.interface';
+import type { IStatisticsRepository } from './interfaces/statistics-repository.interface';
 
 @Injectable()
 export class StatisticsService {
-  constructor(private readonly statisticsRepository: StatisticsRepository) {}
+  constructor(
+    @Inject(STATISTICS_REPOSITORY)
+    private readonly statisticsRepository: IStatisticsRepository,
+  ) {}
 
-  getStatistics() {
+  getStatistics(): Statistic {
     const recentTransactions = this.statisticsRepository.getRecent();
     return this.calculateMetrics(recentTransactions);
   }
@@ -30,6 +34,7 @@ export class StatisticsService {
 
     return stats;
   }
+
   private centsToFloat(value: number): number {
     return parseFloat((value / 100).toFixed(2));
   }

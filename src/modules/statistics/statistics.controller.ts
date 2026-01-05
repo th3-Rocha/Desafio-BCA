@@ -2,7 +2,9 @@ import { Controller, Get, HttpCode } from '@nestjs/common';
 import { StatisticsService } from './statistics.service';
 import { ApiOkResponse, ApiOperation } from '@nestjs/swagger';
 import { Statistic } from './entities/statistic.entity';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Statistics')
 @Controller('statistics')
 export class StatisticsController {
   constructor(private readonly statisticsService: StatisticsService) {}

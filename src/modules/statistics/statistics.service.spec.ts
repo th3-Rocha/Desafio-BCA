@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { StatisticsService } from './statistics.service';
-import { StatisticsRepository } from './statistics.repository';
+import { STATISTICS_REPOSITORY } from './interfaces/statistics-repository.interface';
 
 const mockStatisticsRepository = {
   getRecent: jest.fn(),
@@ -15,14 +15,14 @@ describe('StatisticsService', () => {
       providers: [
         StatisticsService,
         {
-          provide: StatisticsRepository,
+          provide: STATISTICS_REPOSITORY,
           useValue: mockStatisticsRepository,
         },
       ],
     }).compile();
 
     service = module.get<StatisticsService>(StatisticsService);
-    repository = module.get(StatisticsRepository);
+    repository = mockStatisticsRepository;
 
     jest.clearAllMocks();
   });
@@ -46,7 +46,7 @@ describe('StatisticsService', () => {
 
     it('should calculate statistics correctly for multiple transactions', () => {
       const transactions = [
-        { amount: 1000, timestamp: new Date() }, // valores int
+        { amount: 1000, timestamp: new Date() },
         { amount: 2000, timestamp: new Date() },
       ];
       repository.getRecent.mockReturnValue(transactions);

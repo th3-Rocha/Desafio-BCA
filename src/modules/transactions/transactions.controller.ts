@@ -1,12 +1,16 @@
 import { Controller, Post, Body, Delete } from '@nestjs/common';
-import { TransactionsService } from './transactions.service';
 import { CreateTransactionDto } from './dto/create-transaction.dto';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { CreateTransactionUseCase } from './use-cases/create-transaction.use-case';
+import { DeleteAllTransactionsUseCase } from './use-cases/delete-all-transactions.use-case';
 
 @ApiTags('Transactions')
 @Controller('transactions')
 export class TransactionsController {
-  constructor(private readonly transactionsService: TransactionsService) {}
+  constructor(
+    private readonly createTransactionUseCase: CreateTransactionUseCase,
+    private readonly deleteAllTransactionsUseCase: DeleteAllTransactionsUseCase,
+  ) {}
   @ApiOperation({ summary: 'Cria uma nova transação' })
   @ApiResponse({
     status: 201,
@@ -22,7 +26,7 @@ export class TransactionsController {
   })
   @Post()
   create(@Body() createTransactionDto: CreateTransactionDto) {
-    return this.transactionsService.create(createTransactionDto);
+    return this.createTransactionUseCase.execute(createTransactionDto);
   }
   @ApiResponse({
     status: 200,
@@ -31,6 +35,6 @@ export class TransactionsController {
   @ApiOperation({ summary: 'Deleta todas as transações' })
   @Delete()
   deleteAll() {
-    return this.transactionsService.deleteAll();
+    return this.deleteAllTransactionsUseCase.execute();
   }
 }

@@ -1,13 +1,13 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { TransactionsService } from './transactions.service';
-import { TRANSACTION_REPOSITORY } from './interfaces/transaction-repository.interface';
+import { CreateTransactionUseCase } from './create-transaction.use-case';
+import { TRANSACTION_REPOSITORY } from '../interfaces/transaction-repository.interface';
 import { UnprocessableEntityException } from '@nestjs/common';
 
-describe('TransactionsService', () => {
-  let service: TransactionsService;
+describe('CreateTransactionUseCase', () => {
+  let useCase: CreateTransactionUseCase;
+
   const mockRepository = {
     save: jest.fn(),
-    deleteAll: jest.fn(),
   };
 
   beforeEach(async () => {
@@ -15,19 +15,19 @@ describe('TransactionsService', () => {
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        TransactionsService,
+        CreateTransactionUseCase,
         {
-          provide: TRANSACTION_REPOSITORY, // ← Usa o token
+          provide: TRANSACTION_REPOSITORY,
           useValue: mockRepository,
         },
       ],
     }).compile();
 
-    service = module.get<TransactionsService>(TransactionsService);
+    useCase = module.get<CreateTransactionUseCase>(CreateTransactionUseCase);
   });
 
   it('should be defined', () => {
-    expect(service).toBeDefined();
+    expect(useCase).toBeDefined();
   });
 
   it('should create a transaction with correct amount in cents', () => {
@@ -35,10 +35,12 @@ describe('TransactionsService', () => {
       amount: 12.5,
       timestamp: new Date().toISOString(),
     };
-    service.create(dto);
+
+    useCase.execute(dto);
+
     expect(mockRepository.save).toHaveBeenCalledWith({
       amount: 1250,
-      timestamp: expect.any(Date) as unknown as Date, // tira erro de eslit
+      timestamp: expect.any(Date) as unknown as Date,
     });
   });
 
@@ -51,12 +53,7 @@ describe('TransactionsService', () => {
       timestamp: futureDate.toISOString(),
     };
 
-    expect(() => service.create(dto)).toThrow(UnprocessableEntityException);
+    expect(() => useCase.execute(dto)).toThrow(UnprocessableEntityException);
     expect(mockRepository.save).not.toHaveBeenCalled();
-  });
-
-  it('should call repository.deleteAll', () => {
-    service.deleteAll();
-    expect(mockRepository.deleteAll).toHaveBeenCalled();
   });
 });

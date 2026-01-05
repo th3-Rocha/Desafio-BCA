@@ -1,8 +1,12 @@
+// src/modules/database/database.service.ts
 import { Injectable, OnModuleInit, OnModuleDestroy } from '@nestjs/common';
 import { Transaction } from '../transactions/entities/transaction.entity';
+import { IDatabaseService } from './interfaces/database.interface';
 
 @Injectable()
-export class DatabaseService implements OnModuleInit, OnModuleDestroy {
+export class DatabaseService
+  implements IDatabaseService, OnModuleInit, OnModuleDestroy
+{
   private _transactions: Transaction[] = [];
   private cleanupInterval: NodeJS.Timeout;
 
@@ -11,11 +15,11 @@ export class DatabaseService implements OnModuleInit, OnModuleDestroy {
     return this._transactions.filter((t) => t.timestamp.getTime() >= threshold);
   }
 
-  addTransaction(transaction: Transaction) {
+  addTransaction(transaction: Transaction): void {
     this._transactions.push(transaction);
   }
 
-  clear() {
+  clear(): void {
     this._transactions = [];
   }
 
@@ -33,7 +37,7 @@ export class DatabaseService implements OnModuleInit, OnModuleDestroy {
     return Date.now() - 60000;
   }
 
-  private removeOldTransactions() {
+  private removeOldTransactions(): void {
     if (this._transactions.length === 0) return;
     const threshold = this.getThreshold();
     this._transactions = this._transactions.filter(
