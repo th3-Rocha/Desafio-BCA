@@ -8,6 +8,7 @@ import request from 'supertest';
 import { AppModule } from '../src/app.module';
 import helmet from 'helmet';
 import { Statistic } from '../src/modules/statistics/entities/statistic.entity';
+import type { Server } from 'http';
 
 interface ErrorResponse {
   message: string | string[];
@@ -17,6 +18,7 @@ interface ErrorResponse {
 
 describe('Transactions & Statistics API (e2e)', () => {
   let app: INestApplication;
+  let httpServer: Server;
 
   beforeEach(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -38,7 +40,8 @@ describe('Transactions & Statistics API (e2e)', () => {
     );
 
     await app.init();
-    await request(app.getHttpServer()).delete('/transactions');
+    httpServer = app.getHttpServer() as Server;
+    await request(httpServer).delete('/transactions');
   });
 
   afterEach(async () => {
@@ -52,14 +55,14 @@ describe('Transactions & Statistics API (e2e)', () => {
         timestamp: new Date().toISOString(),
       };
 
-      await request(app.getHttpServer())
+      await request(httpServer)
         .post('/transactions')
         .send(transaction)
         .expect(201);
     });
 
     it('should accept transaction with amount = 0', async () => {
-      await request(app.getHttpServer())
+      await request(httpServer)
         .post('/transactions')
         .send({
           amount: 0,
@@ -72,7 +75,7 @@ describe('Transactions & Statistics API (e2e)', () => {
       const futureDate = new Date();
       futureDate.setHours(futureDate.getHours() + 1);
 
-      const response = await request(app.getHttpServer())
+      const response = await request(httpServer)
         .post('/transactions')
         .send({
           amount: 100,
@@ -85,7 +88,7 @@ describe('Transactions & Statistics API (e2e)', () => {
     });
 
     it('should return 422 when amount is negative', async () => {
-      await request(app.getHttpServer())
+      await request(httpServer)
         .post('/transactions')
         .send({
           amount: -50,
@@ -95,7 +98,7 @@ describe('Transactions & Statistics API (e2e)', () => {
     });
 
     it('should return 422 when amount is missing', async () => {
-      await request(app.getHttpServer())
+      await request(httpServer)
         .post('/transactions')
         .send({
           timestamp: new Date().toISOString(),
@@ -104,7 +107,7 @@ describe('Transactions & Statistics API (e2e)', () => {
     });
 
     it('should return 422 when timestamp is missing', async () => {
-      await request(app.getHttpServer())
+      await request(httpServer)
         .post('/transactions')
         .send({
           amount: 100,
@@ -113,7 +116,7 @@ describe('Transactions & Statistics API (e2e)', () => {
     });
 
     it('should return 422 when timestamp format is invalid', async () => {
-      await request(app.getHttpServer())
+      await request(httpServer)
         .post('/transactions')
         .send({
           amount: 100,
@@ -123,7 +126,7 @@ describe('Transactions & Statistics API (e2e)', () => {
     });
 
     it('should return 422 when amount is not a number', async () => {
-      await request(app.getHttpServer())
+      await request(httpServer)
         .post('/transactions')
         .send({
           amount: 'invalid',
@@ -135,19 +138,19 @@ describe('Transactions & Statistics API (e2e)', () => {
 
   describe('DELETE /transactions', () => {
     it('should delete all transactions and return 200', async () => {
-      await request(app.getHttpServer()).post('/transactions').send({
+      await request(httpServer).post('/transactions').send({
         amount: 100,
         timestamp: new Date().toISOString(),
       });
 
-      await request(app.getHttpServer()).post('/transactions').send({
+      await request(httpServer).post('/transactions').send({
         amount: 200,
         timestamp: new Date().toISOString(),
       });
 
-      await request(app.getHttpServer()).delete('/transactions').expect(200);
+      await request(httpServer).delete('/transactions').expect(200);
 
-      const statsResponse = await request(app.getHttpServer())
+      const statsResponse = await request(httpServer)
         .get('/statistics')
         .expect(200);
 
@@ -156,15 +159,13 @@ describe('Transactions & Statistics API (e2e)', () => {
     });
 
     it('should return 200 even when there are no transactions', async () => {
-      await request(app.getHttpServer()).delete('/transactions').expect(200);
+      await request(httpServer).delete('/transactions').expect(200);
     });
   });
 
   describe('GET /statistics', () => {
     it('should return all zeros when there are no transactions', async () => {
-      const response = await request(app.getHttpServer())
-        .get('/statistics')
-        .expect(200);
+      const response = await request(httpServer).get('/statistics').expect(200);
 
       const stats = response.body as Statistic;
       expect(stats).toEqual({
@@ -179,14 +180,12 @@ describe('Transactions & Statistics API (e2e)', () => {
     it('should return correct statistics for a single transaction', async () => {
       const amount = 100.5;
 
-      await request(app.getHttpServer()).post('/transactions').send({
+      await request(httpServer).post('/transactions').send({
         amount,
         timestamp: new Date().toISOString(),
       });
 
-      const response = await request(app.getHttpServer())
-        .get('/statistics')
-        .expect(200);
+      const response = await request(httpServer).get('/statistics').expect(200);
 
       const stats = response.body as Statistic;
       expect(stats).toEqual({
@@ -206,14 +205,10 @@ describe('Transactions & Statistics API (e2e)', () => {
       ];
 
       for (const transaction of transactions) {
-        await request(app.getHttpServer())
-          .post('/transactions')
-          .send(transaction);
+        await request(httpServer).post('/transactions').send(transaction);
       }
 
-      const response = await request(app.getHttpServer())
-        .get('/statistics')
-        .expect(200);
+      const response = await request(httpServer).get('/statistics').expect(200);
 
       const stats = response.body as Statistic;
       expect(stats).toEqual({
@@ -229,19 +224,17 @@ describe('Transactions & Statistics API (e2e)', () => {
       const oldDate = new Date();
       oldDate.setSeconds(oldDate.getSeconds() - 61);
 
-      await request(app.getHttpServer()).post('/transactions').send({
+      await request(httpServer).post('/transactions').send({
         amount: 999,
         timestamp: oldDate.toISOString(),
       });
 
-      await request(app.getHttpServer()).post('/transactions').send({
+      await request(httpServer).post('/transactions').send({
         amount: 100,
         timestamp: new Date().toISOString(),
       });
 
-      const response = await request(app.getHttpServer())
-        .get('/statistics')
-        .expect(200);
+      const response = await request(httpServer).get('/statistics').expect(200);
 
       const stats = response.body as Statistic;
       expect(stats.count).toBe(1);
@@ -249,21 +242,19 @@ describe('Transactions & Statistics API (e2e)', () => {
     });
 
     it('should find correct min and max values', async () => {
-      await request(app.getHttpServer())
+      await request(httpServer)
         .post('/transactions')
         .send({ amount: 100, timestamp: new Date().toISOString() });
 
-      await request(app.getHttpServer())
+      await request(httpServer)
         .post('/transactions')
         .send({ amount: 5, timestamp: new Date().toISOString() });
 
-      await request(app.getHttpServer())
+      await request(httpServer)
         .post('/transactions')
         .send({ amount: 500, timestamp: new Date().toISOString() });
 
-      const response = await request(app.getHttpServer())
-        .get('/statistics')
-        .expect(200);
+      const response = await request(httpServer).get('/statistics').expect(200);
 
       const stats = response.body as Statistic;
       expect(stats.min).toBe(5);
@@ -274,26 +265,26 @@ describe('Transactions & Statistics API (e2e)', () => {
 
   describe('Integration Tests', () => {
     it('should handle complete flow: create -> check -> delete -> check', async () => {
-      let response = await request(app.getHttpServer()).get('/statistics');
+      let response = await request(httpServer).get('/statistics');
       let stats = response.body as Statistic;
       expect(stats.count).toBe(0);
 
-      await request(app.getHttpServer())
+      await request(httpServer)
         .post('/transactions')
         .send({ amount: 100, timestamp: new Date().toISOString() });
 
-      await request(app.getHttpServer())
+      await request(httpServer)
         .post('/transactions')
         .send({ amount: 200, timestamp: new Date().toISOString() });
 
-      response = await request(app.getHttpServer()).get('/statistics');
+      response = await request(httpServer).get('/statistics');
       stats = response.body as Statistic;
       expect(stats.count).toBe(2);
       expect(stats.sum).toBe(300);
 
-      await request(app.getHttpServer()).delete('/transactions');
+      await request(httpServer).delete('/transactions');
 
-      response = await request(app.getHttpServer()).get('/statistics');
+      response = await request(httpServer).get('/statistics');
       stats = response.body as Statistic;
       expect(stats.count).toBe(0);
     });
