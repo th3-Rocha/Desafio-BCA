@@ -61,7 +61,7 @@ describe('DatabaseService', () => {
       jest.advanceTimersByTime(5000);
 
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      const memoryStorage = (service as any)._transactions as Transaction[];
+      const memoryStorage = (service as any).transactions as Transaction[];
 
       expect(memoryStorage.length).toBe(0);
     });
