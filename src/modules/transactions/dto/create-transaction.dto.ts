@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsISO8601, IsNumber, Min } from 'class-validator';
+import { IsISO8601, IsNumber, Min, Matches } from 'class-validator';
 
 export class CreateTransactionDto {
   @ApiProperty({
@@ -11,9 +11,13 @@ export class CreateTransactionDto {
   amount: number;
 
   @ApiProperty({
-    example: '2026-01-25T12:00:00Z',
-    description: 'Timestamp da transação',
+    example: '2026-01-01T12:34:56.789Z',
+    description: 'Data e hora da transação no formato ISO 8601 (UTC)',
   })
-  @IsISO8601({ strict: true }) //strict obriga tudo
+  @Matches(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d{3})?Z$/, {
+    message:
+      'timestamp deve estar no formato ISO 8601 UTC (deve terminar com Z)',
+  })
+  @IsISO8601({ strict: true })
   timestamp: string;
 }

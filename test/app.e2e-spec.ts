@@ -134,6 +134,46 @@ describe('Transactions & Statistics API (e2e)', () => {
         })
         .expect(422);
     });
+
+    it('should return 422 when timestamp has timezone offset instead of Z', async () => {
+      await request(httpServer)
+        .post('/transactions')
+        .send({
+          amount: 100,
+          timestamp: '2024-02-20T12:34:56.789+03:00',
+        })
+        .expect(422);
+    });
+
+    it('should return 422 when timestamp has no timezone indicator', async () => {
+      await request(httpServer)
+        .post('/transactions')
+        .send({
+          amount: 100,
+          timestamp: '2024-02-20T12:34:56.789',
+        })
+        .expect(422);
+    });
+
+    it('should accept timestamp with milliseconds and Z', async () => {
+      await request(httpServer)
+        .post('/transactions')
+        .send({
+          amount: 100,
+          timestamp: '2024-02-20T12:34:56.789Z',
+        })
+        .expect(201);
+    });
+
+    it('should accept timestamp without milliseconds but with Z', async () => {
+      await request(httpServer)
+        .post('/transactions')
+        .send({
+          amount: 100,
+          timestamp: '2024-02-20T12:34:56Z',
+        })
+        .expect(201);
+    });
   });
 
   describe('DELETE /transactions', () => {
