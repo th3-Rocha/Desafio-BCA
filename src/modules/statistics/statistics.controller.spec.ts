@@ -5,9 +5,9 @@ import { Statistic } from './entities/statistic.entity';
 
 describe('StatisticsController', () => {
   let controller: StatisticsController;
-  let useCase: GetStatisticsUseCase;
+  let mockGetStatisticsUseCase: GetStatisticsUseCase;
 
-  const mockGetStatisticsUseCase = {
+  const mockGetStatisticsUseCaseProvider = {
     execute: jest.fn(),
   };
 
@@ -17,13 +17,14 @@ describe('StatisticsController', () => {
       providers: [
         {
           provide: GetStatisticsUseCase,
-          useValue: mockGetStatisticsUseCase,
+          useValue: mockGetStatisticsUseCaseProvider,
         },
       ],
     }).compile();
 
     controller = module.get<StatisticsController>(StatisticsController);
-    useCase = module.get<GetStatisticsUseCase>(GetStatisticsUseCase);
+    mockGetStatisticsUseCase =
+      module.get<GetStatisticsUseCase>(GetStatisticsUseCase);
   });
 
   it('should be defined', () => {
@@ -41,7 +42,7 @@ describe('StatisticsController', () => {
       };
 
       const spy = jest
-        .spyOn(useCase, 'execute')
+        .spyOn(mockGetStatisticsUseCase, 'execute')
         .mockReturnValue(expectedResult);
 
       const result = controller.getStatistics();

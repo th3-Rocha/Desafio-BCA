@@ -8,7 +8,6 @@ const mockStatisticsRepository = {
 
 describe('GetStatisticsUseCase', () => {
   let useCase: GetStatisticsUseCase;
-  let repository: typeof mockStatisticsRepository;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -22,7 +21,6 @@ describe('GetStatisticsUseCase', () => {
     }).compile();
 
     useCase = module.get<GetStatisticsUseCase>(GetStatisticsUseCase);
-    repository = mockStatisticsRepository;
 
     jest.clearAllMocks();
   });
@@ -33,7 +31,7 @@ describe('GetStatisticsUseCase', () => {
 
   describe('execute', () => {
     it('should return zero values when no transactions are found', () => {
-      repository.getRecent.mockReturnValue([]);
+      mockStatisticsRepository.getRecent.mockReturnValue([]);
       const result = useCase.execute();
 
       expect(result).toEqual({
@@ -50,7 +48,7 @@ describe('GetStatisticsUseCase', () => {
         { amount: 1000, timestamp: new Date() },
         { amount: 2000, timestamp: new Date() },
       ];
-      repository.getRecent.mockReturnValue(transactions);
+      mockStatisticsRepository.getRecent.mockReturnValue(transactions);
 
       const result = useCase.execute();
 
@@ -65,7 +63,7 @@ describe('GetStatisticsUseCase', () => {
 
     it('should handle decimal values correctly (centsToFloat)', () => {
       const transactions = [{ amount: 1234, timestamp: new Date() }];
-      repository.getRecent.mockReturnValue(transactions);
+      mockStatisticsRepository.getRecent.mockReturnValue(transactions);
 
       const result = useCase.execute();
 

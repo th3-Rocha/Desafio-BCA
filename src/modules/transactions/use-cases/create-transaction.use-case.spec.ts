@@ -6,7 +6,7 @@ import { UnprocessableEntityException } from '@nestjs/common';
 describe('CreateTransactionUseCase', () => {
   let useCase: CreateTransactionUseCase;
 
-  const mockRepository = {
+  const mockTransactionRepository = {
     save: jest.fn(),
   };
 
@@ -18,7 +18,7 @@ describe('CreateTransactionUseCase', () => {
         CreateTransactionUseCase,
         {
           provide: TRANSACTION_REPOSITORY,
-          useValue: mockRepository,
+          useValue: mockTransactionRepository,
         },
       ],
     }).compile();
@@ -38,7 +38,7 @@ describe('CreateTransactionUseCase', () => {
 
     useCase.execute(dto);
 
-    expect(mockRepository.save).toHaveBeenCalledWith({
+    expect(mockTransactionRepository.save).toHaveBeenCalledWith({
       amount: 1250,
       timestamp: expect.any(Date) as unknown as Date,
     });
@@ -54,6 +54,6 @@ describe('CreateTransactionUseCase', () => {
     };
 
     expect(() => useCase.execute(dto)).toThrow(UnprocessableEntityException);
-    expect(mockRepository.save).not.toHaveBeenCalled();
+    expect(mockTransactionRepository.save).not.toHaveBeenCalled();
   });
 });

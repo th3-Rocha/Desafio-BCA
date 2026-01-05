@@ -5,7 +5,7 @@ import { TRANSACTION_REPOSITORY } from '../interfaces/transaction-repository.int
 describe('DeleteAllTransactionsUseCase', () => {
   let useCase: DeleteAllTransactionsUseCase;
 
-  const mockRepository = {
+  const mockTransactionRepository = {
     deleteAll: jest.fn(),
   };
 
@@ -17,7 +17,7 @@ describe('DeleteAllTransactionsUseCase', () => {
         DeleteAllTransactionsUseCase,
         {
           provide: TRANSACTION_REPOSITORY,
-          useValue: mockRepository,
+          useValue: mockTransactionRepository,
         },
       ],
     }).compile();
@@ -33,6 +33,6 @@ describe('DeleteAllTransactionsUseCase', () => {
 
   it('should call repository.deleteAll', () => {
     useCase.execute();
-    expect(mockRepository.deleteAll).toHaveBeenCalled();
+    expect(mockTransactionRepository.deleteAll).toHaveBeenCalled();
   });
 });

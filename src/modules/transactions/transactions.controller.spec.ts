@@ -7,11 +7,11 @@ import { DeleteAllTransactionsUseCase } from './use-cases/delete-all-transaction
 describe('TransactionsController', () => {
   let controller: TransactionsController;
 
-  const mockCreateUseCase = {
+  const mockCreateTransactionUseCase = {
     execute: jest.fn(),
   };
 
-  const mockDeleteAllUseCase = {
+  const mockDeleteAllTransactionsUseCase = {
     execute: jest.fn(),
   };
 
@@ -21,11 +21,11 @@ describe('TransactionsController', () => {
       providers: [
         {
           provide: CreateTransactionUseCase,
-          useValue: mockCreateUseCase,
+          useValue: mockCreateTransactionUseCase,
         },
         {
           provide: DeleteAllTransactionsUseCase,
-          useValue: mockDeleteAllUseCase,
+          useValue: mockDeleteAllTransactionsUseCase,
         },
       ],
     }).compile();
@@ -47,14 +47,14 @@ describe('TransactionsController', () => {
 
       controller.create(dto);
 
-      expect(mockCreateUseCase.execute).toHaveBeenCalledWith(dto);
+      expect(mockCreateTransactionUseCase.execute).toHaveBeenCalledWith(dto);
     });
   });
 
   describe('deleteAll', () => {
     it('should call DeleteAllTransactionsUseCase', () => {
       controller.deleteAll();
-      expect(mockDeleteAllUseCase.execute).toHaveBeenCalled();
+      expect(mockDeleteAllTransactionsUseCase.execute).toHaveBeenCalled();
     });
   });
 });
