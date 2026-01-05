@@ -1,19 +1,19 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { StatisticsService } from './statistics.service';
-import { STATISTICS_REPOSITORY } from './interfaces/statistics-repository.interface';
+import { GetStatisticsUseCase } from './get-statistics.use-case';
+import { STATISTICS_REPOSITORY } from '../interfaces/statistics-repository.interface';
 
 const mockStatisticsRepository = {
   getRecent: jest.fn(),
 };
 
-describe('StatisticsService', () => {
-  let service: StatisticsService;
+describe('GetStatisticsUseCase', () => {
+  let useCase: GetStatisticsUseCase;
   let repository: typeof mockStatisticsRepository;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        StatisticsService,
+        GetStatisticsUseCase,
         {
           provide: STATISTICS_REPOSITORY,
           useValue: mockStatisticsRepository,
@@ -21,20 +21,21 @@ describe('StatisticsService', () => {
       ],
     }).compile();
 
-    service = module.get<StatisticsService>(StatisticsService);
+    useCase = module.get<GetStatisticsUseCase>(GetStatisticsUseCase);
     repository = mockStatisticsRepository;
 
     jest.clearAllMocks();
   });
 
   it('should be defined', () => {
-    expect(service).toBeDefined();
+    expect(useCase).toBeDefined();
   });
 
-  describe('getStatistics', () => {
+  describe('execute', () => {
     it('should return zero values when no transactions are found', () => {
       repository.getRecent.mockReturnValue([]);
-      const result = service.getStatistics();
+      const result = useCase.execute();
+
       expect(result).toEqual({
         count: 0,
         sum: 0,
@@ -50,7 +51,9 @@ describe('StatisticsService', () => {
         { amount: 2000, timestamp: new Date() },
       ];
       repository.getRecent.mockReturnValue(transactions);
-      const result = service.getStatistics();
+
+      const result = useCase.execute();
+
       expect(result).toEqual({
         count: 2,
         sum: 30.0,
@@ -63,7 +66,9 @@ describe('StatisticsService', () => {
     it('should handle decimal values correctly (centsToFloat)', () => {
       const transactions = [{ amount: 1234, timestamp: new Date() }];
       repository.getRecent.mockReturnValue(transactions);
-      const result = service.getStatistics();
+
+      const result = useCase.execute();
+
       expect(result).toEqual({
         count: 1,
         sum: 12.34,

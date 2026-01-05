@@ -1,13 +1,13 @@
 import { Controller, Get, HttpCode } from '@nestjs/common';
-import { StatisticsService } from './statistics.service';
 import { ApiOkResponse, ApiOperation } from '@nestjs/swagger';
 import { Statistic } from './entities/statistic.entity';
 import { ApiTags } from '@nestjs/swagger';
+import { GetStatisticsUseCase } from './use-cases/get-statistics.use-case';
 
 @ApiTags('Statistics')
 @Controller('statistics')
 export class StatisticsController {
-  constructor(private readonly statisticsService: StatisticsService) {}
+  constructor(private readonly getStatisticsUseCase: GetStatisticsUseCase) {}
 
   @HttpCode(200)
   @ApiOperation({
@@ -20,6 +20,6 @@ export class StatisticsController {
     type: Statistic,
   })
   getStatistics(): Statistic {
-    return this.statisticsService.getStatistics();
+    return this.getStatisticsUseCase.execute();
   }
 }

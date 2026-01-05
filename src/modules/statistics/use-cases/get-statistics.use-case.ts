@@ -1,17 +1,17 @@
 import { Injectable, Inject } from '@nestjs/common';
-import { Transaction } from '../transactions/entities/transaction.entity';
-import { Statistic } from './entities/statistic.entity';
-import { STATISTICS_REPOSITORY } from './interfaces/statistics-repository.interface';
-import type { IStatisticsRepository } from './interfaces/statistics-repository.interface';
+import { Transaction } from '../../transactions/entities/transaction.entity';
+import { Statistic } from '../entities/statistic.entity';
+import { STATISTICS_REPOSITORY } from '../interfaces/statistics-repository.interface';
+import type { IStatisticsRepository } from '../interfaces/statistics-repository.interface';
 
 @Injectable()
-export class StatisticsService {
+export class GetStatisticsUseCase {
   constructor(
     @Inject(STATISTICS_REPOSITORY)
     private readonly statisticsRepository: IStatisticsRepository,
   ) {}
 
-  getStatistics(): Statistic {
+  execute(): Statistic {
     const recentTransactions = this.statisticsRepository.getRecent();
     return this.calculateMetrics(recentTransactions);
   }
@@ -22,6 +22,7 @@ export class StatisticsService {
     }
 
     const values = transactions.map((t) => t.amount);
+
     const sum = values.reduce((acc, curr) => acc + curr, 0);
 
     const stats: Statistic = {
